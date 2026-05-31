@@ -1,0 +1,16 @@
+{
+  "makes": ["Toyota"],
+  "models": ["Solara"],
+  "min_year": null,
+  "max_year": null,
+  "min_price": 4000,
+  "max_price": 11000,
+  "max_mileage": 250000,
+  "cities": [
+    "toronto", "mississauga", "brampton", "markham", "vaughan",
+    "richmond hill", "ajax", "pickering", "oshawa",
+    "burlington", "oakville", "milton"
+  ],
+  "interval_minutes": 30,
+  "heartbeat_hour": 9
+}

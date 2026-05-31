@@ -1,0 +1,19 @@
+[Unit]
+Description=Facebook Marketplace Car Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/fb-car-bot
+EnvironmentFile=/root/fb-car-bot/.env
+ExecStart=/usr/bin/npx tsx src/index.ts
+Restart=on-failure
+RestartSec=30s
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=fb-car-bot
+
+[Install]
+WantedBy=multi-user.target

@@ -1,22 +1,22 @@
 # fb-car-bot
 
-A self-hosted bot that watches Facebook Marketplace for used-car deals and pings you on Telegram the moment a match shows up. Built for the Greater Toronto Area but works anywhere — just edit the cities.
+A self-hosted bot that watches Facebook Marketplace for used-car deals and pings you on Telegram the moment a match shows up. Built for the Greater Toronto Area but works anywhere. Just edit the cities.
 
 Tell it the makes, models, price range, and max mileage you care about. It polls Marketplace on an interval, filters out everything that does not fit, dedupes listings it has already seen, and sends you only the good ones.
 
 ## How it works
 
 ```
-Facebook Marketplace  ──>  scraper  ──>  parser  ──>  evaluator  ──>  Telegram alert
-   (patchright)            (raw GraphQL)   (clean)    (your config)     (only matches)
+Facebook Marketplace  >  scraper  >  parser  >  evaluator  >  Telegram alert
+   (patchright)         (raw data)   (clean)   (your config)   (only matches)
 ```
 
-- **scraper** (`src/scraper.ts`) — drives a real Chromium browser via [patchright](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright) (a stealth Playwright fork) to pull Marketplace listings
-- **parser** (`src/parser.ts`) — extracts year / make / model / price / mileage from messy listing titles
-- **evaluator** (`src/evaluator.ts`) — applies your `config.json` filters
-- **db** (`src/db.ts`) — remembers what it has already sent so you never get duplicates
-- **telegram** (`src/telegram.ts`) — sends the alerts
-- **index** (`src/index.ts`) — the main poll loop
+- **scraper** (`src/scraper.ts`): drives a real Chromium browser via [patchright](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright), a stealth Playwright fork, to pull Marketplace listings
+- **parser** (`src/parser.ts`): extracts year, make, model, price, and mileage from messy listing titles
+- **evaluator** (`src/evaluator.ts`): applies your `config.json` filters
+- **db** (`src/db.ts`): remembers what it has already sent so you never get duplicates
+- **telegram** (`src/telegram.ts`): sends the alerts
+- **index** (`src/index.ts`): the main poll loop
 
 ## Prerequisites
 
@@ -36,7 +36,7 @@ npx patchright install chromium
 ## Create a Telegram bot
 
 1. Open Telegram and search for `@BotFather`
-2. Send `/newbot` and follow the prompts — you'll get a **bot token**
+2. Send `/newbot` and follow the prompts. You'll get a **bot token**
 3. Search for your new bot, open it, and press **Start**
 4. Get your **chat ID**: send any message to the bot, then open
    `https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates` in a browser.
@@ -60,14 +60,14 @@ DB_PATH=./data/listings.db
 
 ## First-time Facebook login
 
-Run this once to save your Facebook session. A real browser window opens —
-log in normally, then press Enter in the terminal:
+Run this once to save your Facebook session. A real browser window opens.
+Log in normally, then press Enter in the terminal:
 
 ```bash
 npm run login
 ```
 
-Your session is saved to `storageState.json` (gitignored, never committed).
+Your session is saved to `storageState.json`, which is gitignored and never committed.
 
 ## Set your search criteria
 
@@ -88,12 +88,12 @@ Edit `config.json`:
 }
 ```
 
-- `models` — leave empty `[]` to match any model, or list specifics like `["Corolla", "Civic"]`
-- `min_year` / `max_year` — set to `null` to disable that bound
-- `max_mileage` — listings with no mileage shown are **not** rejected
-- `cities` — Marketplace location slugs to search
-- `interval_minutes` — how often to check
-- `heartbeat_hour` — hour (0–23) to send a daily "still alive" message so you know it's running
+- `models`: leave empty `[]` to match any model, or list specifics like `["Corolla", "Civic"]`
+- `min_year` / `max_year`: set to `null` to disable that bound
+- `max_mileage`: listings with no mileage shown are **not** rejected
+- `cities`: Marketplace location slugs to search
+- `interval_minutes`: how often to check
+- `heartbeat_hour`: hour (0 to 23) to send a daily "still alive" message so you know it's running
 
 ## Run locally
 
@@ -112,7 +112,7 @@ npm test
 Runs as a `systemd` service so it survives reboots and restarts on failure. Replace `user@your-vps-ip` with your server.
 
 ```bash
-# From your machine — copy the project up
+# From your machine, copy the project up
 scp -r ./fb-car-bot user@your-vps-ip:~/
 # Copy your saved Facebook session separately (it's gitignored)
 scp storageState.json user@your-vps-ip:~/fb-car-bot/
@@ -128,7 +128,7 @@ npx patchright install chromium --with-deps
 cp .env.example .env
 nano .env   # fill in TELEGRAM_TOKEN and TELEGRAM_CHAT_ID
 
-# Install as a service (edit fb-car-bot.service first if your path/user differs)
+# Install as a service (edit fb-car-bot.service first if your path or user differs)
 chmod +x install.sh
 sudo bash install.sh
 ```
@@ -139,7 +139,7 @@ Monitor it:
 journalctl -u fb-car-bot -f
 ```
 
-Change criteria later — edit `config.json` on the VPS, then:
+Change criteria later. Edit `config.json` on the VPS, then:
 
 ```bash
 systemctl restart fb-car-bot
@@ -161,7 +161,7 @@ ssh user@your-vps-ip "systemctl restart fb-car-bot"
 
 ## If Facebook blocks your VPS IP
 
-Datacenter IPs (Hetzner, DigitalOcean, etc.) sometimes get blocked. Add a
+Datacenter IPs (Hetzner, DigitalOcean, and similar) sometimes get blocked. Add a
 residential proxy to the `chromium.launch` call in `src/scraper.ts`:
 
 ```typescript
@@ -174,14 +174,14 @@ const browser = await chromium.launch({
 Providers like Webshare.io offer residential proxies for a few dollars a month
 at this request volume.
 
-## Notes & disclaimer
+## Notes and disclaimer
 
 - This is a personal automation tool for your own Marketplace searches. Scraping
-  Facebook is against their Terms of Service — use it on your own account, at a
+  Facebook is against their Terms of Service. Use it on your own account, at a
   reasonable polling interval, at your own risk.
-- Secrets (`.env`, `storageState.json`, the `data/` folder) are gitignored and
+- Secrets (`.env`, `storageState.json`, and the `data/` folder) are gitignored and
   never leave your machine.
 
 ## License
 
-MIT — do whatever you want with it.
+MIT. Do whatever you want with it.
